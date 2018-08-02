@@ -14,13 +14,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	/*
-	 * @Autowired public void configureGlobal(AuthenticationManagerBuilder auth)
-	 * throws Exception {
-	 * auth.inMemoryAuthentication().withUser("admin").password("admin").roles(
-	 * "ADMIN").and().withUser("user") .password("user").roles("USER"); ; }
-	 */
-
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.inMemoryAuthentication()
@@ -30,20 +23,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		/*
-		 * http.authorizeRequests().antMatchers("/", "/css/**", "/img/**",
-		 * "/*css/*", "/webjars/**", "/static/img/logo.png")
-		 * .permitAll().anyRequest().authenticated().and().formLogin().loginPage
-		 * ("/login").permitAll().and() .logout().logoutRequestMatcher(new
-		 * AntPathRequestMatcher("/logout")).permitAll();
-		 */
 
-		http.authorizeRequests().antMatchers("/", "/books","/books/find", "/books/find/*", "/css/**", "/webjars/**", "/static/img/**").permitAll()
+		http.authorizeRequests().antMatchers("/", "/books","/books/book**","/books/find", "/books/find/*", "/css/**", "/webjars/**", "/static/img/**").permitAll()
 				.anyRequest().authenticated().and().formLogin().loginPage("/login").permitAll()
 				.defaultSuccessUrl("/").failureUrl("/login?error").and().logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll();
-		
-		//http.csrf().disable();
 	}
 
 }

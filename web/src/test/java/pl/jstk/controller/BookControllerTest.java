@@ -37,8 +37,6 @@ import pl.jstk.to.BookTo;
 @SpringBootTest
 public class BookControllerTest {
 
-	/*@Autowired
-	FilterChainProxy springFilterChainProxy;*/
 	private MockMvc mockMvc;
 	
 	@Autowired
@@ -58,25 +56,10 @@ public class BookControllerTest {
 		Mockito.reset(bookService);
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 				.apply(SecurityMockMvcConfigurers.springSecurity())
-				//.addFilters(springFilterChainProxy)
 				.build();
 		ReflectionTestUtils.setField(bookController, "bookService", bookService);
 	}
 	
-
-	/*@Test
-	@WithMockUser(username = "admin", roles = { "USER", "ADMIN" })
-	public void testBooksPageWithAuthentication() throws Exception {
-		// given when
-		List<BookTo> listOfBooks = generateListOfBook();
-		Mockito.when(bookService.findAllBooks()).thenReturn(listOfBooks);
-		ResultActions resultActions = mockMvc.perform(get("/books"));
-				//.with(testSecurityContext()));
-		// then
-		resultActions.andExpect(status().isOk()).andExpect(view().name("books"))
-				.andExpect(model().attribute("bookList", listOfBooks)).andExpect(content().string(containsString("")));
-
-	}*/
 
 	@Test
 	public void testBooksPage() throws Exception {
@@ -88,6 +71,19 @@ public class BookControllerTest {
 		resultActions.andExpect(status().isOk())
 					.andExpect(view().name("books"))
 					.andExpect(model().attribute("bookList", listOfBooks))
+					.andExpect(content().string(containsString("")));
+	}
+	
+	@Test
+	public void testBookDetailPage() throws Exception {
+		// given when
+		BookTo bookTo = generateBookTo();
+		Mockito.when(bookService.findBookById(bookTo.getId())).thenReturn(bookTo);
+		ResultActions resultActions = mockMvc.perform(get("/books/book?id=10"));
+		// then
+		resultActions.andExpect(status().isOk())
+					.andExpect(view().name(ViewNames.BOOK))
+					.andExpect(model().attribute("book", bookTo))
 					.andExpect(content().string(containsString("")));
 	}
 
@@ -102,7 +98,7 @@ public class BookControllerTest {
 		Mockito.when(bookService.saveBook(Mockito.any())).thenReturn(bookTo);
 		ResultActions resultActions = mockMvc
 				.perform(post("/greeting").with(csrf()).flashAttr("book", bookTo));
-						//.with(testSecurityContext()));
+						
 		// then
 		resultActions.andExpect(status().isOk()).andExpect(view().name(ViewNames.BOOK))
 				.andExpect(model().attribute("book", hasProperty("title", is(title))))
@@ -116,7 +112,7 @@ public class BookControllerTest {
 	public void testShowAddBooksPageWithAuthentication() throws Exception {
 		// given when
 		ResultActions resultActions = mockMvc.perform(get("/books/add"));
-				//.with(testSecurityContext()));
+				
 		// then
 		resultActions.andExpect(status().isOk()).andExpect(view().name(ViewNames.ADD_BOOK))
 				.andExpect(model().attribute("book", nullValue()))
@@ -127,7 +123,7 @@ public class BookControllerTest {
 	public void testShowAddBooksPageWithoutAuthentication() throws Exception {
 		// given when
 		ResultActions resultActions = mockMvc.perform(get("/books/add"));
-				//.with(testSecurityContext()));
+				
 		// then
 		resultActions.andExpect(status().is3xxRedirection())
 					.andExpect(redirectedUrl("http://localhost/login"))
@@ -155,7 +151,7 @@ public class BookControllerTest {
 		Mockito.when(bookService.findBookById(bookTo.getId())).thenReturn(bookTo);
 		Mockito.doNothing().when(bookService).deleteBook(bookTo.getId());
 		ResultActions resultActions = mockMvc.perform(get("/books/delete/book?id=10"));
-				//.with(testSecurityContext()));
+				
 		// then
 		Mockito.verify(bookService,Mockito.times(1)).deleteBook(bookTo.getId());
 		Mockito.verify(bookService,Mockito.times(1)).findBookById(bookTo.getId());
