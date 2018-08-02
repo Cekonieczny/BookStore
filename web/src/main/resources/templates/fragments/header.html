@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+	<th:block th:fragment="header">
+		<nav class="navbar navbar-inverse navbar-static-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" th:href="@{/}"> <img src=""/><img
+						th:src="@{/static/img/logo.png}" alt="logo" />
+					</a>
+				</div>
+				<div id="navbar" class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li><a th:href="@{/}">Home</a></li>
+						<li><a th:href="@{/books}">Books</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li sec:authorize="isAuthenticated()"
+							style="display: inline-block;"><a th:href="@{/logout}"><span
+								class="glyphicon glyphicon-log-out"> </span> Log out</a></li>
+						<li sec:authorize="isAuthenticated()"
+							style="color: white, display: inline-block;"><font
+							color="white"><span class="glyphicon glyphicon-user"></span>User
+								Name :<span sec:authentication="name"> </span></font></li>
+						<li sec:authorize="isAuthenticated()"
+							style="color: white, display: inline-block;"><font
+							color="white">||| User Role :<span
+								sec:authentication="principal.authorities"></span></font></li>
+						<li sec:authorize="!isAuthenticated()"
+							style="display: inline-block;"><a th:href="@{/login}"><span
+								class="glyphicon glyphicon-log-in"></span> Login</a></li>
+					</ul>
+				</div>
+				<div></div>
+			</div>
+		</nav>
+	</th:block>
+</body>
+</html>
